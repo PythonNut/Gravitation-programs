@@ -29,7 +29,7 @@ p0 = zip(x0,v0)
 # x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t)
 #                   for x0i in x0])
 # print(p0)
-x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,2,.00001,1000000) for pi in p0])
+x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,2,.00001,3000000) for pi in p0])
 
 # Set up figure & 3D axis for animation
 fig = plt.figure()
@@ -91,11 +91,12 @@ def animate(i):
 start_time = time.time()
 anim = animation.FuncAnimation(fig, animate, init_func=init,
                                frames=1000, interval=30, blit=True)
-
+print("anim_time is", time.time()-start_time)
+start_time = time.time()
 # Save as mp4. This requires mplayer or ffmpeg to be installed
 #anim.save('lorentz_attractor.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
+plt.show()
 mywriter = animation.FFMpegWriter()
-anim.save(str(N_trajectories)+'_trajectories.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264'], bitrate=2000)
+anim.save(str(N_trajectories)+'_trajectories.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264'], bitrate=4000)
 print("saved the file!")
 print("savetime is", time.time()-start_time)
-plt.show()
