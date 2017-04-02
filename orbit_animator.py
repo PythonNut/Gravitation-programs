@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import time
 import numpy as np
 from scipy import integrate
