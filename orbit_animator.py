@@ -7,15 +7,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import cnames
 from matplotlib import animation
 import backend
-N_trajectories = 5
 
-def lorentz_deriv(coord, t0, sigma=10., beta=8./3, rho=28.0):
-    """Compute the time-derivative of a Lorentz system."""
-    x = coord[0]
-    y = coord[1]
-    z = coord[2]
-    return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
-
+N_trajectories = 10
 
 # Choose random starting points, uniformly distributed from -15 to 15
 np.random.seed(1)
@@ -29,7 +22,7 @@ p0 = zip(x0,v0)
 # x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t)
 #                   for x0i in x0])
 # print(p0)
-x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,2,.00001,3000000) for pi in p0])
+x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,2,.0001,300000) for pi in p0])
 
 # Set up figure & 3D axis for animation
 fig = plt.figure()
@@ -96,6 +89,7 @@ start_time = time.time()
 # Save as mp4. This requires mplayer or ffmpeg to be installed
 #anim.save('lorentz_attractor.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
 plt.show()
+print('began writing')
 mywriter = animation.FFMpegWriter()
 anim.save(str(N_trajectories)+'_trajectories.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264'], bitrate=4000)
 print("saved the file!")

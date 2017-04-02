@@ -7,16 +7,29 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import cnames
 from matplotlib import animation
 import backend
-N_trajectories = 1
+N_trajectories = 5
+
+def lorentz_deriv(coord, t0, sigma=10., beta=8./3, rho=28.0):
+    """Compute the time-derivative of a Lorentz system."""
+    x = coord[0]
+    y = coord[1]
+    z = coord[2]
+    return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
 
 
+# Choose random starting points, uniformly distributed from -15 to 15
+np.random.seed(1)
+x0 = -2 + 4 * np.random.random((N_trajectories, 3))
+v0 = -1 + 2 * np.random.random((N_trajectories, 3))
+p0 = zip(x0,v0)
 # Note: t0 is required for the odeint function, though it's not used here.
 
 # Solve for the trajectories
 # t = np.linspace(0, 4, 1000)
 # x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t)
 #                   for x0i in x0])
-x_t = np.asarray([backend.simulate((1,0,0),(0,10,10),1,1,2,.00001,1000)])
+# print(p0)
+x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,2,.00001,1000000) for pi in p0])
 
 # Set up figure & 3D axis for animation
 fig = plt.figure()
@@ -33,9 +46,9 @@ pts = sum([ax.plot([], [], [], 'o', c=c)
            for c in colors], [])
 
 # prepare the axes limits
-ax.set_xlim((-1, 1))
-ax.set_ylim((-1, 1))
-ax.set_zlim((-1, 1))
+ax.set_xlim((-15, 15))
+ax.set_ylim((-15, 15))
+ax.set_zlim((-5, 5))
 
 # set point-of-view: specified by (altitude degrees, azimuth degrees)
 ax.view_init(30, 0)
@@ -53,7 +66,8 @@ def init():
 # animation function.  This will be called sequentially with the frame number
 def animate(i):
     # we'll step two time-steps per frame.  This leads to nice results.
-    i = (2 * i) % x_t.shape[2]
+    steps = 3000  
+    i = (steps * i) % x_t.shape[1]
 
     for line, pt, xi in zip(lines, pts, x_t):
         x, y, z = xi[:i].T
@@ -69,15 +83,19 @@ def animate(i):
         pt.set_data(x[-1:], y[-1:])
         pt.set_3d_properties(z[-1:])
 
-    ax.view_init(30, 0.3 * i)
+    ax.view_init(30, 0.0001 * i)
     fig.canvas.draw()
     return lines + pts
 
 # instantiate the animator.
+start_time = time.time()
 anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=100, interval=30, blit=True)
+                               frames=1000, interval=30, blit=True)
 
 # Save as mp4. This requires mplayer or ffmpeg to be installed
 #anim.save('lorentz_attractor.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
-
+mywriter = animation.FFMpegWriter()
+anim.save(str(N_trajectories)+'_trajectories.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264'], bitrate=2000)
+print("saved the file!")
+print("savetime is", time.time()-start_time)
 plt.show()
