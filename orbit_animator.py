@@ -34,7 +34,8 @@ def animate(i):
         line.set_3d_properties(z)                             # same but it's 3d so need z
         pt.set_data(x[-1:], y[-1:])                           # ...uh
         pt.set_3d_properties(z[-1:])                          # "it is obvious what this does so I won't document it"
-    ax.view_init(90, 0.0001 * i)                              # this initializes the offset view of the axes, and sets a smooth rate of rotation (.0001*i) dependent on how far through
+    # ax.view_init(90, 0.0001 * i)                              # this initializes the offset view of the axes, and sets a smooth rate of rotation (.0001*i) dependent on how far through
+    ax.view_init(90, 0)
     fig.canvas.draw()                                         #  draw stuff idk man i'm no artist
     return lines + pts 
 
@@ -80,13 +81,13 @@ def wrapper(r_exp_list, position, velocity, k, m, step_size, numsteps):
         print("anim_time is", time.time()-start_time)
         start_time = time.time()
         plt.show()
-        # mywriter = animation.FFMpegWriter(bitrate=4000)                                                                                # you have to install FFMpeg if you want to write out to mp4
-        # anim.save('single_orbit_n='+str(n)+'position_'+str(position)+'velocity'+str(velocity)+'.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264']) # autogenerate filenames and export
-        # print("saved the file!")
-        # print("savetime is", time.time()-start_time)
-        # input()
-        # plt.close()
+        mywriter = animation.FFMpegWriter(bitrate=4000)                                                                                # you have to install FFMpeg if you want to write out to mp4
+        anim.save('single_orbit_n='+str(n)+'position_'+str(position)+'velocity'+str(velocity)+'timestep'+str(step_size)+'numsteps'+str(numsteps)+'.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264']) # autogenerate filenames and export
+        print("saved the file!")
+        print("savetime is", time.time()-start_time)
+        input()
+        plt.close()
     print('combined runtime is', time.time() - first_time)
 
-wrapper([1,2,3],(.5,0,0),(0,2,0),1,1,.00001,200000000)
+# wrapper([1,3],(.25,0,0),(0,2,0),1,1,.000001,200000000)
 

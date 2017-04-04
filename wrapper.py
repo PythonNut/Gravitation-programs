@@ -38,7 +38,7 @@ def animate(i):
     fig.canvas.draw()                                         #  draw stuff idk man i'm no artist
     return lines + pts 
 
-def wrapper(r_exp_list, N_trajectories):
+def wrapper(r_exp_list, N_trajectories, writeout):
     print("called wrapper")                                   # not Dr. Dre, sadly.  I wish I had him on dial.  
     first_time = time.time()                                  # because I have lots of other "start_time" defninitons sprinkled throughout
     for n in r_exp_list:                                      # iterate through a list of exponent values for r in newton's law of gravitation
@@ -48,7 +48,13 @@ def wrapper(r_exp_list, N_trajectories):
         v0 = -1 + 2 * np.random.random((N_trajectories, 3))   # randomizes starting velocity for each trajectory
         p0 = zip(x0,v0)                                       # iterates through and returns x0 and v0 pairs in one tuple, p0.  For ease in the list comprehension below. 
         global x_t                                            # so that the animate function can still use this
-        x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,n,.0001,12000000) for pi in p0]) # if you're outputting from your own function, make sure that it's an array of position vectors (also arrays!)
+        x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,n,.0001,1200000) for pi in p0]) # if you're outputting from your own function, make sure that it's an array of position vectors (also arrays!)
+        num_traj = 0
+        for traj in x_t:
+            num_traj+=1
+            text_file = open("Output_for"+str(num_traj)+str(n)+".txt", "w")
+            text_file.write(str(traj)+"\n\n\n\n\n\n")
+            text_file.close()
         # Set up figure & 3D axis for animation
         global fig                                            # 
         fig = plt.figure()                                    # 
@@ -78,11 +84,12 @@ def wrapper(r_exp_list, N_trajectories):
         anim = animation.FuncAnimation(fig, animate, init_func=init, frames=4000, interval=30, blit=True)
         print("anim_time is", time.time()-start_time)
         start_time = time.time()
-        # plt.show()
-        mywriter = animation.FFMpegWriter(bitrate=4000)                                                                                # you have to install FFMpeg if you want to write out to mp4
-        anim.save(str(N_trajectories)+'_trajectories_4x_n='+str(n)+'.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264']) # autogenerate filenames and export
-        print("saved the file!")
-        print("savetime is", time.time()-start_time)
+        plt.show()
+        if writeout:
+            mywriter = animation.FFMpegWriter(bitrate=4000)                                                                                # you have to install FFMpeg if you want to write out to mp4
+            anim.save(str(N_trajectories)+'_trajectories_4x_n='+str(n)+'largersteps.mp4', writer='ffmpeg', fps=60, extra_args=['-vcodec', 'libx264']) # autogenerate filenames and export
+            print("saved the file!")
+            print("savetime is", time.time()-start_time)
         plt.close()
     print('combined runtime is', time.time() - first_time)
-wrapper([1,1.5,2,2.5,3], 5) 
+wrapper([2.1,1.9], 5,True) 
