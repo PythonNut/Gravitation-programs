@@ -89,5 +89,5 @@ def wrapper(r_exp_list, position, velocity, k, m, step_size, numsteps):
         plt.close()
     print('combined runtime is', time.time() - first_time)
 
-# wrapper([1,3],(.25,0,0),(0,2,0),1,1,.000001,200000000)
+# wrapper([-1,3,-2],(.25,0,0),(0,2,0),1,1,.0001,2000000)
 
