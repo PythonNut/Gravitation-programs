@@ -90,7 +90,47 @@ def wrapper(G, m_list, step_size, num_steps, r_exp_list=[2]): #add back r_exp_li
     print('combined runtime is', time.time() - first_time)
 
 G = 6.67*(10**(-11))
-m_list =[ [5000000000,(0,-1,0),(0,0,0)], [3,(0,1,0), (0,.01,0)], [3,(.1,1,0), (0,-.1,0)]]
+
+# AU = 149597870700
+# sun_mass = 1.989*(10**30)
+# r_sun = 0
+
+# earth_mass = 5.972*(10**24)
+# earth_aphelion = 1.017*AU
+# earth_perihelion = 0.98327*AU
+
+# mercury_mass = 3.285*10(**23)
+# mercury_aphelion = .466697*AU
+# mercury_perihelion = .301499*AU
+
+# venus_mass = 4.867*(10**24)
+# venus_aphelion = .728213*AU
+# venus_perihelion = .718440*AU
+
+
+# mars_mass = 6.39*(10**23)
+# mars_aphelion = 1.6660*AU
+# mars_perihelion = 1.3814
+
+
+# jupiter_mass = 1.898*(10**27)
+# jupiter_aphelion = 5.45492*AU
+# jupiter_perihelion =4.95029*AU
+
+# saturn_mass = 5.683*(10**26)
+# saturn_aphelion = 10.086*AU
+# saturn_perihelion = 9.024*AU 
+
+# uranus_mass = 8.681*(10**25)
+# uranus_aphelion = 20.11*AU
+# uranus_perihelion = 18.33*AU
+
+# neptune_mass = 1.024*(10**26)
+# neptune_aphelion = 30.33*AU
+# neptune_perihelion = 29.81*AU
+
+
+m_list =[ [5000000000,(0,-1,0),(0,0,0)], [3,(0,1,0), (0,.01,0)], [3,(.1,1,0), (0,-.1,0)] ]
 step_size = 0.000001
 num_steps = 1000000
 wrapper(G, m_list, step_size, num_steps, r_exp_list=[2])

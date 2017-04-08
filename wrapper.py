@@ -48,7 +48,8 @@ def wrapper(r_exp_list, N_trajectories, writeout):
         v0 = -1 + 2 * np.random.random((N_trajectories, 3))   # randomizes starting velocity for each trajectory
         p0 = zip(x0,v0)                                       # iterates through and returns x0 and v0 pairs in one tuple, p0.  For ease in the list comprehension below. 
         global x_t                                            # so that the animate function can still use this
-        x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,n,.0001,1200000) for pi in p0]) # if you're outputting from your own function, make sure that it's an array of position vectors (also arrays!)
+        x_t = np.asarray([backend.simulate(pi[0],pi[1],1,1,n,.0001,120000) for pi in p0]) # if you're outputting from your own function, make sure that it's an array of position vectors (also arrays!)
+        print(x_t)
         num_traj = 0
         for traj in x_t:
             num_traj+=1
@@ -92,4 +93,4 @@ def wrapper(r_exp_list, N_trajectories, writeout):
             print("savetime is", time.time()-start_time)
         plt.close()
     print('combined runtime is', time.time() - first_time)
-wrapper([2.1,1.9], 5,True) 
+wrapper([2.1,1.9], 5,False) 
