@@ -20,36 +20,47 @@ def init():
 
 # animation function.  This will be called sequentially with the frame number
 def animate(i):
-    steps = 200                                               # number of timesteps per frame                                                         
+    steps = 20000                                               # number of timesteps per frame                                                         
     i = (steps * i) % x_t.shape[1]                            # to be honest I have no idea what this does but it makes my animations work.  Seriously, what is it?
+    # print(x_t.shape)
+    # print(len(pts))
+    # print(len(lines))
     for line, pt, xi in zip(lines, pts, x_t):                 # iterates through all trajectories by matching them to a line and point at some time step
+        # print('hello')
+        # print('in loops')
+        # print(i)
+        # time.sleep(1)
         x, y, z = xi[:i].T                                    # also don't know what this does
+        # print(xi)
         line.set_data(x, y)                                   # adds the current data to the line or something?   
         line.set_3d_properties(z)                             # same but it's 3d so need z
         pt.set_data(x[-1:], y[-1:])                           # ...uh
         pt.set_3d_properties(z[-1:])                          # "it is obvious what this does so I won't document it"
     # ax.view_init(90, 0.0001 * i)                            # this initializes the offset view of the axes, and sets a smooth rate of rotation (.0001*i) dependent on how far through
-    ax.view_init(90, 0)
+    ax.view_init(30, .0001*i)
     fig.canvas.draw()                                         #  draw stuff idk man i'm no artist
+    # print('hello')
     return lines + pts 
 
-def wrapper(G, m_list, n, step_size, num_steps, r_exp_list=[2]): #add back r_exp_list?
+def wrapper(G, m_list, step_size, num_steps, r_exp_list=[2]): #add back r_exp_list?
     print("called wrapper")                                   # not Dr. Dre, sadly.  I wish I had him on dial.  
     first_time = time.time()                                  # because I have lots of other "start_time" defninitons sprinkled throughout
     for n in r_exp_list:                                      # iterate through a list of exponent values for r in newton's law of gravitation
         print("current job: r**(-", n,")")                    # when runtimes get long it's nice to know how far through you are
         global x_t                                            # so that the animate function can still use this
-        x_t = np.asarray([nbodybackend.simulate(G, m_list, n, step_size, num_steps)]) # if you're outputting from your own function, make sure that it's an array of position vectors (also arrays!)
+        # x_t = np.asarray([nbodybackend.simulate(G, m_list, n, step_size, num_steps)]) # if you're outputting from your own function, make sure that it's an array of position vectors (also arrays!)
+        x_t = np.asarray(nbodybackend.simulate(G, m_list, n, step_size, num_steps))
+        print(x_t)
         # Set up figure & 3D axis for animation
         global fig                                            # 
         fig = plt.figure()                                    # 
         global ax                                             # 
         ax = fig.add_axes([0, 0, 1, 1], projection='3d')      # 
-        ax.axis('off')                                         # sets the background axes "on".  Change to "off" if you want a more artistic/minimalistic viewing experience
+        ax.axis('on')                                         # sets the background axes "on".  Change to "off" if you want a more artistic/minimalistic viewing experience
 
         # choose a different color for each trajectory
         global colors
-        colors = plt.cm.jet(np.linspace(0, 1, 1))
+        colors = plt.cm.jet(np.linspace(0, 1, len(m_list)))
 
         # set up lines and points
         global lines
@@ -63,7 +74,7 @@ def wrapper(G, m_list, n, step_size, num_steps, r_exp_list=[2]): #add back r_exp
         ax.set_zlim((-3, 3))
 
         # set point-of-view: specified by (altitude degrees, azimuth degrees)
-        ax.view_init(90, 0)
+        ax.view_init(30, 0)
         # instantiate the animator.
         start_time = time.time()
         anim = animation.FuncAnimation(fig, animate, init_func=init, frames=2000, interval=1, blit=True)
@@ -79,10 +90,8 @@ def wrapper(G, m_list, n, step_size, num_steps, r_exp_list=[2]): #add back r_exp
     print('combined runtime is', time.time() - first_time)
 
 G = 6.67*(10**(-11))
-m_list =( (50000000,(0,-1,0),(0,.5,0)), (3,(0,1,0), (0,1,0)) )
-n=2
-step_size = 0.001
-num_steps = 100000
-step_size = .01
-wrapper(G, m_list, n, step_size, num_steps, r_exp_list=[2])
+m_list =[ [5000000000,(0,-1,0),(0,0,0)], [3,(0,1,0), (0,.01,0)], [3,(.1,1,0), (0,-.1,0)]]
+step_size = 0.000001
+num_steps = 1000000
+wrapper(G, m_list, step_size, num_steps, r_exp_list=[2])
 

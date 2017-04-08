@@ -6,6 +6,7 @@ def central_force(m, G, other_bodies, n):
 		containing the mass r, and v values for said mass, the r value for the mass in 
 		question, and n, the exponent on r in Newton's law of Gravitation
 	"""
+	# print(m)
 	x_0 = m[1][0]
 	y_0 = m[1][1]
 	z_0 = m[1][2]
@@ -48,24 +49,33 @@ def one_step(G, m_list, n, step_size):
 		force = central_force(m,G,other_bodies,n)
 		new_position = euler_step(m[1], m[2], step_size)
 		new_velocity = euler_step(m[2], force, step_size)
-		new_m_list.append((m[0],new_position,new_velocity))
+		new_m_list.append([m[0],new_position,new_velocity])
 	return new_m_list
 
 def simulate(G, m_list, n, step_size, num_steps):
+	num_m = len(m_list)
+	traj_list = [[] for k in range(num_m)]
 	start_time = time.time()
 	steps = 0
-	trajectories_list = []
-	new_stuff = m_list
+	new_m_list = m_list
 	while steps < num_steps: 
-		new_stuff = one_step(G, new_stuff, n, step_size)
-		pos_list = []
-		for m in new_stuff:
-			pos_list.append((np.asarray(m[1])))
-		trajectories_list.append((np.asarray(pos_list)))
+		new_m_list = one_step(G, new_m_list, n, step_size)
+		# pos_list = []
+		for k in range(len(new_m_list)):
+			# pos_list.append(m[1])
+			traj_list[k].append(np.asarray(new_m_list[k][1]))
 		steps += 1 
-		# print(new_stuff)
+		# print(new_m_list)
 		# print(pos_list)
 	stop_time = time.time()
 	print("runtime is", stop_time-start_time)
-	trajectories_array = np.asarray(trajectories_list)
-	return trajectories_array
+	trajectories_array = np.asarray(traj_list)
+	return trajectories_array 
+# G = 6.67*(10**(-11))
+# m_list =[[5000000000,(0,0,0),(0,.001,0)], [3,(0,1,0), (0,1,0)]]
+# # m_list =[[5000000000,(0,-1,0),(0,.5,0)]]
+# n=2
+# step_size = 0.001
+# num_steps = 100000
+# step_size = .01
+# a=simulate(G, m_list, 2, step_size, num_steps)
